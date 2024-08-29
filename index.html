@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Web-Based Game</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #000;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background-color: #444;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <script>
+        // Setup
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const player = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            size: 30,
+            color: '#fff',
+            speed: 5
+        };
+
+        const aiPlayer = {
+            x: Math.random() * (canvas.width - 30),
+            y: Math.random() * (canvas.height - 30),
+            size: 30,
+            color: '#f00',
+            speed: 3
+        };
+
+        function drawPlayer() {
+            ctx.fillStyle = player.color;
+            ctx.fillRect(player.x, player.y, player.size, player.size);
+        }
+
+        function drawAI() {
+            ctx.fillStyle = aiPlayer.color;
+            ctx.fillRect(aiPlayer.x, aiPlayer.y, aiPlayer.size, aiPlayer.size);
+        }
+
+        function updateAI() {
+            aiPlayer.x += Math.random() * aiPlayer.speed * 2 - aiPlayer.speed;
+            aiPlayer.y += Math.random() * aiPlayer.speed * 2 - aiPlayer.speed;
+
+            // Keep AI within canvas bounds
+            aiPlayer.x = Math.max(0, Math.min(canvas.width - aiPlayer.size, aiPlayer.x));
+            aiPlayer.y = Math.max(0, Math.min(canvas.height - aiPlayer.size, aiPlayer.y));
+        }
+
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Handle player movement
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'ArrowLeft') player.x -= player.speed;
+                if (event.key === 'ArrowRight') player.x += player.speed;
+                if (event.key === 'ArrowUp') player.y -= player.speed;
+                if (event.key === 'ArrowDown') player.y += player.speed;
+
+                // Keep player within canvas bounds
+                player.x = Math.max(0, Math.min(canvas.width - player.size, player.x));
+                player.y = Math.max(0, Math.min(canvas.height - player.size, player.y));
+            });
+
+            // Update and draw game objects
+            updateAI();
+            drawPlayer();
+            drawAI();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        gameLoop();
+    </script>
+</body>
+</html>
